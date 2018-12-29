@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        position: relative;
+      }
+
+      img {
+        width: 220px;
+        display: block;
+      }
+
+      .item {
+        box-shadow: 2px 2px 2px #999;
+        position: absolute;
+        transition:  0.3s;
+      }
+    </style>
+    <title>原生JS实现瀑布流</title>
+  </head>
+  <body>
+    <div id="box">
+      <div class="item">
+        <img
+          src="./images/09fe0d50a6d8111ade4fba84e3a1eead3806c1eb155e0-akVsT2_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/285f21e63737e87b0d6836a19ed0303cfa92886026a69-qpnkbX_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/30ae7e465405fbe1c98aec529cb97fae7537a0cb503e-BsPOat_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/497c501bef39f5d8a7ea7025f262db1e86067dc34c780-oe06Gw_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/53ed6c152d4a09e93252f5bab2e06102c335602c39677-95AxB7_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/65a295c7a66ba77f0e5b35369aa7beb56f9afae2ecd1-lkMIRj_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/6f2ae9acf3917f7eca23187337b114e5f52ed9b5ef02-6VjtNL_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/794a02fe99ea132d30acd1a6c922f950993f8d8439b7a-Vjavva_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/808a5d553841d26337a511113103e6244010fb6e456fb-VzDXnV_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/83266e4f212e4e358fe9d64bd9f31e5c7a15385237818-25ogMh_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/98e2cd9df36c27b4ed8a1dbb3e111ed079759f0d150b4-zNSlIS_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/9af04c25294edd65a63d91db0e9154ea421881d9571fc-eftdEp_fw658.jpg"
+        />
+      </div>
+      <div class="item"></div>
+      <div class="item">
+        <img
+          src="./images/8177686c6ea1a7eaa5be11bc68650c2182648e0e1449b-gcf530_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/a2c6ee6fdeccfaacb571ad88a45c90f46948d51d41c05-0GCVHq_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/cdc6c8096aa6b9af84abccdfc1562c2b64a3c229d02b-5MCYgW_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/ee04a4914d5088619b4fe3f63189e52e15476e8428912-0In80Z_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/d68390081e740b1d78df38f05198051db98a86b71bcb2-X1yUgp_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/efb466a11fe17a1ebad6a1d38bc18a0b55619f9a36540-CG4zd1_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/a78eb142c45239b353430ca190d9abb6dc3a5ca051849-IfYRVo_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/9db99b4aca9b6b43b8a1b360c201ba7eaa9ee1d616455-Rgqf9u_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/a1a6680233384d3b26ef264022fccf773bd07fde40067-cSMuk3_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/fdf022ee846928e8ad5a475c37884c3f751eaf9546caa-WYCoE3_fw658.jpg"
+        />
+      </div>
+      <div class="item">
+        <img
+          src="./images/ffd3e6de17cf769e00c8519bae81ba8693075e4e5059-cFHvvE_fw658.jpg"
+        />
+      </div>
+    </div>
+  </body>
+  <script>
+    var box = document.getElementById("box");
+    var items = box.children;
+    //每列的间隙
+    var gap = 10;
+    window.onload = function() {
+      //调用waterfall
+      waterfall();
+      // 页面尺寸改变时实时触发
+      window.onresize = function() {
+        waterfall();
+      };
+      function waterfall() {
+        // 1- 确定列数  = 页面的宽度 / 图片的宽度
+        var pageWidth = getClient().width;
+        var itemWidth = items[0].offsetWidth;
+        var columns = parseInt(pageWidth / (itemWidth + gap));
+        var arr = [];
+        for (var i = 0; i < items.length; i++) {
+          if (i < columns) {
+            // 2- 确定第一行
+            items[i].style.top = 0;
+            items[i].style.left = (itemWidth + gap) * i + "px";
+            items[i].style.boxShadow = "5px 5px 2px #888888";
+            arr.push(items[i].offsetHeight);
+          } else {
+            // 其他行
+            // 3- 找到数组中最小高度  和 它的索引
+            var minHeight = arr[0];
+            var index = 0;
+            for (var j = 0; j < arr.length; j++) {
+              if (minHeight > arr[j]) {
+                minHeight = arr[j];
+                index = j;
+              }
+            }
+            // 4- 设置下一行的第一个盒子位置
+            // top值就是最小列的高度 + gap
+            items[i].style.top = arr[index] + gap + "px";
+            // left值就是最小列距离左边的距离
+            items[i].style.left = items[index].offsetLeft + "px";
+            items[i].style.boxShadow = "5px 5px 2px #888888";
+            // 5- 修改最小列的高度
+            // 最小列的高度 = 当前自己的高度 + 拼接过来的高度 + 间隙的高度
+            arr[index] = arr[index] + items[i].offsetHeight + gap;
+          }
+        }
+      }
+    };
+
+    // clientWidth 处理兼容性
+    function getClient() {
+      return {
+        width:
+          window.innerWidth ||
+          document.documentElement.clientWidth ||
+          document.body.clientWidth,
+        height:
+          window.innerHeight ||
+          document.documentElement.clientHeight ||
+          document.body.clientHeight
+      };
+    }
+    // scrollTop兼容性处理
+    function getScrollTop() {
+      return window.pageYOffset || document.documentElement.scrollTop;
+    }
+  </script>
+</html>
